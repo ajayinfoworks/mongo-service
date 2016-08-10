@@ -45,7 +45,7 @@ public class MongoDbIngestor implements Callable<String> {
             String tmpDirName = String.format("%s/%s_%d", appTempDir, source.getSourceName(), random.nextInt(1000));
             String mongoURI = String.format("mongodb://%s:%s@%s/%s.%s", source.getUserName(), source.getPassword(),
                     source.getHostPorts(), source.getDbName(), collection);
-            String targetDir = source.getTargetHdfsLocation();
+            String targetDir = source.getTargetHdfsLocation() + "/" + collection;
 
             System.out.println("tmpDirName = " + tmpDirName);
             System.out.println("mongoURI = " + mongoURI);
