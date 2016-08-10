@@ -50,6 +50,7 @@ public class MongoDbIngestor implements Callable<String> {
             System.out.println("tmpDirName = " + tmpDirName);
             System.out.println("mongoURI = " + mongoURI);
             System.out.println("shellScriptLocation = " + shellScriptLocation);
+            System.out.println("targetDir = " + targetDir);
 
             String[] cmd = { shellScriptLocation, mongoURI, tmpDirName, targetDir };
             System.out.println("executing command... " + cmd.toString());
