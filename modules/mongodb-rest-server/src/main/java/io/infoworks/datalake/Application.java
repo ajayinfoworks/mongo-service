@@ -35,7 +35,7 @@ public class Application {
 
         // Factory pattern will allow us to store metadata (such as source information) on any storage
         // such as, MongoDb, MySQL etc.
-        String metadataType = context.getEnvironment().getProperty("metadata.type");
+        String metadataType = context.getEnvironment().getProperty("metadata.store.type");
         if (metadataType.equalsIgnoreCase("MongoDb")) {
             return new MongoDbSourceManager();
         }
