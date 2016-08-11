@@ -7,6 +7,7 @@ import io.infoworks.datalake.metadata.MongoDbSourceManager;
 import io.infoworks.datalake.metadata.SourceManager;
 import io.infoworks.datalake.metadata.SourceRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -30,13 +31,15 @@ public class Application {
     @Autowired
     private SourceRepository repository;
 
+    @Value("${metadata.store.type}")
+    private String metadataStoreType;
+
     @Bean
     public SourceManager getSourceManager() {
 
         // Factory pattern will allow us to store metadata (such as source information) on any storage
         // such as, MongoDb, MySQL etc.
-        String metadataType = context.getEnvironment().getProperty("metadata.store.type");
-        if (metadataType.equalsIgnoreCase("MongoDb")) {
+        if (metadataStoreType.equalsIgnoreCase("MongoDb")) {
             return new MongoDbSourceManager();
         }
         return null;

@@ -24,7 +24,7 @@ public class SourceController {
         if (id == null) {
             return String.format("This source name (%s) already exists. It wasn't added", name);
         } else {
-            return String.format("Source with name (%s) was added successfully. It's Id is: %s", name, id);
+            return String.format("Source with name (%s) was added successfully. Its Id is: %s", name, id);
         }
     }
 
