@@ -1,6 +1,5 @@
 package io.infoworks.datalake.metadata;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
@@ -9,9 +8,6 @@ import java.util.List;
 
 @EnableMongoRepositories
 public class MongoDbSourceManager extends BaseSourceManager {
-
-    @Autowired
-    private SourceRepository repository;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -52,7 +48,6 @@ public class MongoDbSourceManager extends BaseSourceManager {
         existing.setPassword(source.getPassword());
         existing.setHostPorts(source.getHostPorts());
         existing.setDbName(source.getDbName());
-        existing.setIngestionStatus(source.getIngestionStatus());
         return repository.save(existing);
     }
 
@@ -72,7 +67,41 @@ public class MongoDbSourceManager extends BaseSourceManager {
         if (existingSource == null) {
             return null;
         }
-        existingSource.addCollection(collectionName);
+
+        // If collection with this name already exists for this source, return. Don't add.
+        if (getCollectionBySourceCollectionName(existingSource, collectionName) != null) {
+            return null;
+        }
+
+        Collection collection = new Collection(collectionName);
+        existingSource.addCollection(collection);
         return repository.save(existingSource);
+    }
+
+    @Override
+    public String getIngestionStatus(String sourceName, String collectionName) {
+        Source existingSource = repository.findBySourceName(sourceName);
+        if (existingSource != null) {
+            Collection collection = getCollectionBySourceCollectionName(existingSource, collectionName);
+            if (collection != null) {
+                return collection.getIngestionStatus();
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Boolean setIngestionStatus(Source source, String collectionName, String status) {
+        try {
+            Collection collection = getCollectionBySourceCollectionName(source, collectionName);
+            if (collection != null) {
+                collection.setIngestionStatus(status);
+                repository.save(source);
+                return true;
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

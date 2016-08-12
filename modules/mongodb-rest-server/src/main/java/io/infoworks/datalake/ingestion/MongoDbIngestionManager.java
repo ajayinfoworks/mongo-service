@@ -13,14 +13,14 @@ public class MongoDbIngestionManager implements IngestionManager{
     private ApplicationContext context;
 
     @Override
-    public String ingest(Source source, String collection) {
+    public String ingest(Source source, String collectionName) {
 
         // Start the Map Reduce job in a different thread & exit.
         ExecutorService executor = Executors.newSingleThreadExecutor();
 
         MongoDbIngestor ingestor = (MongoDbIngestor) context.getBean("MongoDbIngestor");
         ingestor.setSource(source);
-        ingestor.setCollection(collection);
+        ingestor.setCollection(collectionName);
 
         // Submit in a different thread
         executor.submit(ingestor);

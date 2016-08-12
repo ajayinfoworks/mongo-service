@@ -8,7 +8,6 @@ import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.Mapper;
@@ -45,7 +44,7 @@ public class MongoDbMRJob extends Configured implements Tool {
             FileOutputFormat.setOutputPath(job, out);
             job.setJarByClass(MongoDbMRJob.class);
             job.setMapperClass(ReadTablesFromMongo.class);
-            job.setOutputKeyClass(NullWritable.class);
+            job.setOutputKeyClass(Text.class);
             job.setOutputValueClass(Text.class);
 
             job.setInputFormatClass(MongoInputFormat.class);
@@ -70,12 +69,13 @@ public class MongoDbMRJob extends Configured implements Tool {
         }
     }
 
-    public static class ReadTablesFromMongo extends Mapper<Object, BSONObject, NullWritable, Text> {
+    public static class ReadTablesFromMongo extends Mapper<Object, BSONObject, Text, Text> {
         @Override
         public void map(Object key, BSONObject value, Context context) throws IOException,
                 InterruptedException {
             String bsonString = value.toString();
             JSONObject jsonObj = null;
+            String keyVal = value.get("_id").toString();
             try {
                 jsonObj = new JSONObject(bsonString);
                 System.out.println(jsonObj.toString());
@@ -83,7 +83,7 @@ public class MongoDbMRJob extends Configured implements Tool {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
             }
-            context.write(null, new Text(jsonObj.toString()));
+            context.write(new Text(keyVal), new Text(jsonObj.toString()));
         }
     }
 

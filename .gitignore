@@ -1,0 +1,9 @@
+# Created by .ignore support plugin (hsz.mobi)
+.gitignore
+.idea/
+modules/mongodb-rest-server/infoworks-mongodb-rest-server.iml
+modules/mongodb-rest-server/mongo-service.iml
+modules/mongodb-rest-server/target/
+modules/mongodb-utils/infoworks-mongodb-utils.iml
+modules/mongodb-utils/target/
+mongodb-service.iml

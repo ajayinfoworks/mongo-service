@@ -10,22 +10,44 @@ import java.util.List;
 public abstract class BaseSourceManager implements SourceManager {
 
     @Autowired
-    private ApplicationContext context;
+    protected ApplicationContext context;
+
+    @Autowired
+    protected SourceRepository repository;
 
     @Override
-    public String ingest(String sourceName, String table) {
+    public String ingest(String sourceName, String collectionName) {
         Source source = getSource(sourceName);
         if (source == null) {
-            return String.format("Ingestion FAILED!!! Souce with name (%s) was not found!", sourceName);
+            return String.format("Ingestion FAILED!!! Source with name (%s) was not found!", sourceName);
         }
 
-        if (source.getIngestionStatus() != null &&
-                source.getIngestionStatus().equalsIgnoreCase("In Progress")) {
-            return String.format("Ingestion FAILED!!! Souce with name (%s) was not found!", sourceName);
+        Collection collection = getCollectionBySourceCollectionName(source, collectionName);
+        if (collection == null) {
+            return String.format("Ingestion FAILED!!! Collection with name (%s) was not found in this Source(%s)!",
+                    collectionName, sourceName);
+        }
+
+        String status = getIngestionStatus(sourceName, collectionName);
+        if (status != null && status.equalsIgnoreCase("In Progress")) {
+            return String.format("Ingestion is in progress for Source(%s), Collection(%s). Please wait until " +
+                            "it completes!!!", sourceName, collectionName);
         }
 
         IngestionManager manager = (IngestionManager) context.getBean("IngestionManager", source.getSourceType());
-        return manager.ingest(source, table);
+        return manager.ingest(source, collectionName);
+    }
+
+    @Override
+    public Collection getCollectionBySourceCollectionName(Source source, String collectionName) {
+        if (source != null) {
+            for (Collection collection : source.getCollections()) {
+                if (collection.getCollectionName().equalsIgnoreCase(collectionName)) {
+                    return collection;
+                }
+            }
+        }
+        return null;
     }
 
     @Override
@@ -60,6 +82,16 @@ public abstract class BaseSourceManager implements SourceManager {
 
     @Override
     public Source getSource(String name) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public String getIngestionStatus(String sourceName, String collectionName) {
+        throw new NotImplementedException();
+    }
+
+    @Override
+    public Boolean setIngestionStatus(Source source, String collectionName, String status) {
         throw new NotImplementedException();
     }
 }

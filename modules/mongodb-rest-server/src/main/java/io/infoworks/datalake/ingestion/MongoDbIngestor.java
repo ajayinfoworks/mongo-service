@@ -38,9 +38,10 @@ public class MongoDbIngestor implements Callable<String> {
 
     @Override
     public String call() throws Exception {
+        String status;
         try {
-            source.setIngestionStatus("In Progress");
-            sourceManager.updateSource(source);
+            status = "In Progress";
+            sourceManager.setIngestionStatus(source, collection, status);
 
             String tmpDirName = String.format("%s/%s_%d", appTempDir, source.getSourceName(), random.nextInt(1000));
             String mongoURI = String.format("mongodb://%s:%s@%s/%s.%s", source.getUserName(), source.getPassword(),
@@ -59,23 +60,25 @@ public class MongoDbIngestor implements Callable<String> {
             process.waitFor();
             System.out.println("done waiting... " + cmd.toString());
             if (process.exitValue() == 0) {
-                source.setIngestionStatus("SUCCESS");
+                status = "SUCCESS";
+                sourceManager.setIngestionStatus(source, collection, status);
             } else {
                 System.out.println("ERROR: " + convertStreamToString(process.getErrorStream()));
-                source.setIngestionStatus("ERROR");
+                status = "ERROR";
+                sourceManager.setIngestionStatus(source, collection, status);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            source.setIngestionStatus("ERROR");
+            status = "ERROR";
+            sourceManager.setIngestionStatus(source, collection, status);
         } finally {
             sourceManager.updateSource(source);
         }
-        return source.getIngestionStatus();
+        return status;
     }
 
     static String convertStreamToString(java.io.InputStream is) {
         java.util.Scanner s = new java.util.Scanner(is).useDelimiter("\\A");
         return s.hasNext() ? s.next() : "";
     }
-
 }

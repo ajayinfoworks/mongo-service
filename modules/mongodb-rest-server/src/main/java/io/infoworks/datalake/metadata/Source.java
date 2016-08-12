@@ -20,7 +20,7 @@ public class Source implements java.io.Serializable {
     private String hostPorts = "127.0.0.1:27017";
     private String dbName;
     private String dbOptions;
-    private List<String> collections = new ArrayList<>();
+    private List<Collection> collections = new ArrayList<>();
 
     private String targetHdfsLocation;
     private String targetHiveSchema;
@@ -28,7 +28,6 @@ public class Source implements java.io.Serializable {
     private String schemaType = "Schema-less";
     private String columns;
     private String ingestionType = "Full load";
-    private String ingestionStatus;
 
     public Source() {
     }
@@ -128,14 +127,6 @@ public class Source implements java.io.Serializable {
         this.ingestionType = ingestionType;
     }
 
-    public String getIngestionStatus() {
-        return ingestionStatus;
-    }
-
-    public void setIngestionStatus(String ingestionStatus) {
-        this.ingestionStatus = ingestionStatus;
-    }
-
     public String getTargetHdfsLocation() {
         return targetHdfsLocation;
     }
@@ -152,15 +143,15 @@ public class Source implements java.io.Serializable {
         this.targetHiveSchema = targetHiveSchema;
     }
 
-    public List<String> getCollections() {
+    public List<Collection> getCollections() {
         return collections;
     }
 
-    public void setCollections(List<String> collections) {
+    public void setCollections(List<Collection> collections) {
         this.collections = collections;
     }
 
-    public void addCollection(String collectionName) {
-        this.collections.add(collectionName);
+    public void addCollection(Collection collection) {
+        this.collections.add(collection);
     }
 }
