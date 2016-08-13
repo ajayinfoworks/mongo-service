@@ -1,10 +1,14 @@
 package io.infoworks.datalake.metadata;
 
+import com.mongodb.MongoClientURI;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.data.mongodb.repository.config.EnableMongoRepositories;
-import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 @EnableMongoRepositories
 public class MongoDbSourceManager extends BaseSourceManager {
@@ -57,8 +61,20 @@ public class MongoDbSourceManager extends BaseSourceManager {
     }
 
     @Override
-    public List<String> getCollectionsInSource(String sourceName) {
-        throw new NotImplementedException();
+    public Set<String> getCollectionsInDb(String sourceName) {
+        try {
+            Source source = getSource(sourceName);
+            String mongoURI = String.format("mongodb://%s:%s@%s/%s", source.getUserName(), source.getPassword(),
+                    source.getHostPorts(), source.getDbName());
+
+            MongoClientURI uri = new MongoClientURI(mongoURI);
+            SimpleMongoDbFactory factory = new SimpleMongoDbFactory(uri);
+            MongoTemplate template = new MongoTemplate(factory);
+            return template.getCollectionNames();
+        } catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
     @Override

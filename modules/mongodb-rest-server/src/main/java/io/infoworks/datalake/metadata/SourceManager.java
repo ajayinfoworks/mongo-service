@@ -1,6 +1,7 @@
 package io.infoworks.datalake.metadata;
 
 import java.util.List;
+import java.util.Set;
 
 public interface SourceManager {
     <T extends Object> T addSource(String name, String type, String hiveSchema, String hdfsDir);
@@ -9,7 +10,7 @@ public interface SourceManager {
     Source updateSource(Source source);
     Source getSource(String name);
     String ingest(String sourceName, String table);
-    List<String> getCollectionsInSource(String sourceName);
+    Set<String> getCollectionsInDb(String sourceName);
     Source addCollection(String sourceName, String collectionName);
     String getIngestionStatus(String sourceName, String collectionName);
     Boolean setIngestionStatus(Source source, String collectionName, String status);

@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
+import java.util.Set;
 
 @RestController
 public class SourceController {
@@ -28,9 +29,9 @@ public class SourceController {
         }
     }
 
-    @RequestMapping("/getcollections")
-    public List<String> getCollections(@RequestParam(value="name")  String sourceName) {
-        return sourceManager.getCollectionsInSource(sourceName);
+    @RequestMapping("/source/getCollectionsInDb")
+    public Set<String> getCollectionsInDb(@RequestParam(value="name")  String sourceName) {
+        return sourceManager.getCollectionsInDb(sourceName);
     }
 
     @RequestMapping("/sources")

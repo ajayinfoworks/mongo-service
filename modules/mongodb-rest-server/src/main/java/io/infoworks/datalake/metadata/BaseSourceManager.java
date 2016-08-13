@@ -6,6 +6,7 @@ import org.springframework.context.ApplicationContext;
 import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
+import java.util.Set;
 
 public abstract class BaseSourceManager implements SourceManager {
 
@@ -51,7 +52,7 @@ public abstract class BaseSourceManager implements SourceManager {
     }
 
     @Override
-    public List<String> getCollectionsInSource(String sourceName) {
+    public Set<String> getCollectionsInDb(String sourceName) {
         throw new NotImplementedException();
     }
 
